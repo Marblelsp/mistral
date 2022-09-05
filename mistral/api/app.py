@@ -14,6 +14,7 @@
 #    limitations under the License.
 
 from oslo_config import cfg
+from oslo_log import log as logging
 import oslo_middleware.cors as cors_middleware
 import oslo_middleware.http_proxy_to_wsgi as http_proxy_to_wsgi_middleware
 import osprofiler.web
@@ -49,6 +50,8 @@ def setup_app(config=None):
         config = get_pecan_config()
 
     m_config.set_config_defaults()
+
+    logging.setup(cfg.CONF, 'Mistral')
 
     app_conf = dict(config.app)
 
@@ -92,9 +95,6 @@ def setup_app(config=None):
 
 
 def init_wsgi():
-    # By default, oslo.config parses the CLI args if no args is provided.
-    # As a result, invoking this wsgi script from gunicorn leads to the error
-    # with argparse complaining that the CLI options have already been parsed.
-    m_config.parse_args(args=[])
+    m_config.parse_args()
 
     return setup_app()

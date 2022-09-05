@@ -77,7 +77,8 @@ def _get_action_execution_resource_for_list(action_ex):
 
 def _get_action_executions(task_execution_id=None, marker=None, limit=None,
                            sort_keys='created_at', sort_dirs='asc',
-                           fields='', include_output=False, **filters):
+                           fields='', include_output=False, all_projects=False,
+                           **filters):
     """Return all action executions.
 
     Where project_id is the same as the requester or
@@ -118,6 +119,7 @@ def _get_action_executions(task_execution_id=None, marker=None, limit=None,
         sort_keys=sort_keys,
         sort_dirs=sort_dirs,
         fields=fields,
+        all_projects=all_projects,
         **filters
     )
 
@@ -224,13 +226,15 @@ class ActionExecutionsController(rest.RestController):
                          wtypes.text, wtypes.text, wtypes.text,
                          wtypes.text, wtypes.text, wtypes.text, types.uuid,
                          wtypes.text, wtypes.text, bool, types.jsontype,
-                         types.jsontype, types.jsontype, wtypes.text, bool)
+                         types.jsontype, types.jsontype, wtypes.text, bool,
+                         bool)
     def get_all(self, marker=None, limit=None, sort_keys='created_at',
                 sort_dirs='asc', fields='', created_at=None, name=None,
                 tags=None, updated_at=None, workflow_name=None,
                 task_name=None, task_execution_id=None, state=None,
                 state_info=None, accepted=None, input=None, output=None,
-                params=None, description=None, include_output=False):
+                params=None, description=None, include_output=False,
+                all_projects=False):
         """Return all tasks within the execution.
 
         Where project_id is the same as the requester or
@@ -277,6 +281,9 @@ class ActionExecutionsController(rest.RestController):
         """
         acl.enforce('action_executions:list', context.ctx())
 
+        if all_projects:
+            acl.enforce('action_executions:list:all_projects', context.ctx())
+
         filters = filter_utils.create_filters_from_request_params(
             created_at=created_at,
             name=name,
@@ -296,12 +303,13 @@ class ActionExecutionsController(rest.RestController):
 
         LOG.debug(
             "Fetch action_executions. marker=%s, limit=%s, "
-            "sort_keys=%s, sort_dirs=%s, filters=%s",
+            "sort_keys=%s, sort_dirs=%s, filters=%s, all_projects=%s",
             marker,
             limit,
             sort_keys,
             sort_dirs,
-            filters
+            filters,
+            all_projects
         )
 
         return _get_action_executions(
@@ -311,6 +319,7 @@ class ActionExecutionsController(rest.RestController):
             sort_dirs=sort_dirs,
             fields=fields,
             include_output=include_output,
+            all_projects=all_projects,
             **filters
         )
 
@@ -352,14 +361,14 @@ class TasksActionExecutionController(rest.RestController):
                          wtypes.text, types.uniquelist, wtypes.text,
                          wtypes.text, wtypes.text, wtypes.text, wtypes.text,
                          wtypes.text, bool, types.jsontype, types.jsontype,
-                         types.jsontype, wtypes.text, bool)
+                         types.jsontype, wtypes.text, bool, bool)
     def get_all(self, task_execution_id, marker=None, limit=None,
                 sort_keys='created_at', sort_dirs='asc', fields='',
                 created_at=None, name=None, tags=None,
                 updated_at=None, workflow_name=None, task_name=None,
                 state=None, state_info=None, accepted=None, input=None,
                 output=None, params=None, description=None,
-                include_output=None):
+                include_output=None, all_projects=False):
         """Return all tasks within the execution.
 
         Where project_id is the same as the requester or
@@ -406,6 +415,9 @@ class TasksActionExecutionController(rest.RestController):
         """
         acl.enforce('action_executions:list', context.ctx())
 
+        if all_projects:
+            acl.enforce('action_executions:list:all_projects', context.ctx())
+
         filters = filter_utils.create_filters_from_request_params(
             created_at=created_at,
             name=name,
@@ -425,12 +437,13 @@ class TasksActionExecutionController(rest.RestController):
 
         LOG.debug(
             "Fetch action_executions. marker=%s, limit=%s, "
-            "sort_keys=%s, sort_dirs=%s, filters=%s",
+            "sort_keys=%s, sort_dirs=%s, filters=%s, all_projects=%s",
             marker,
             limit,
             sort_keys,
             sort_dirs,
-            filters
+            filters,
+            all_projects
         )
 
         return _get_action_executions(
@@ -440,6 +453,7 @@ class TasksActionExecutionController(rest.RestController):
             sort_dirs=sort_dirs,
             fields=fields,
             include_output=include_output,
+            all_projects=all_projects,
             **filters
         )
 

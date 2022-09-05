@@ -63,6 +63,17 @@ rules = [
         ]
     ),
     policy.DocumentedRuleDefault(
+        name=WORKBOOKS % 'list:all_projects',
+        check_str=base.RULE_ADMIN_ONLY,
+        description='Return a list of workbooks from all projects.',
+        operations=[
+            {
+                'path': '/v2/workbooks',
+                'method': 'GET'
+            }
+        ]
+    ),
+    policy.DocumentedRuleDefault(
         name=WORKBOOKS % 'update',
         check_str=base.RULE_ADMIN_OR_OWNER,
         description='Update an workbook.',

@@ -232,12 +232,12 @@ class ActionsController(rest.RestController, hooks.HookController):
                          types.list, types.uniquelist, wtypes.text,
                          wtypes.text, resources.SCOPE_TYPES, wtypes.text,
                          wtypes.text, wtypes.text, wtypes.text,
-                         wtypes.text, wtypes.text, wtypes.text)
+                         wtypes.text, bool, wtypes.text, wtypes.text)
     def get_all(self, marker=None, limit=None, sort_keys='name',
                 sort_dirs='asc', fields='', created_at=None,
                 name=None, scope=None, tags=None,
                 updated_at=None, description=None, definition=None,
-                is_system=None, input=None, namespace=''):
+                is_system=None, all_projects=False, input=None, namespace=''):
         """Return all actions.
 
         :param marker: Optional. Pagination marker for large data sets.
@@ -271,6 +271,9 @@ class ActionsController(rest.RestController, hooks.HookController):
         """
         acl.enforce('actions:list', context.ctx())
 
+        if all_projects:
+            acl.enforce('actions:list:all_projects', context.ctx())
+
         filters = filter_utils.create_filters_from_request_params(
             created_at=created_at,
             name=name,
@@ -286,12 +289,13 @@ class ActionsController(rest.RestController, hooks.HookController):
 
         LOG.debug(
             "Fetch actions. marker=%s, limit=%s, sort_keys=%s, "
-            "sort_dirs=%s, filters=%s",
+            "sort_dirs=%s, filters=%s, all_projects=%s",
             marker,
             limit,
             sort_keys,
             sort_dirs,
-            filters
+            filters,
+            all_projects
         )
 
         sort_keys = ['name'] if sort_keys is None else sort_keys
@@ -314,6 +318,7 @@ class ActionsController(rest.RestController, hooks.HookController):
             limit=limit,
             sort_fields=sort_keys,
             sort_dirs=sort_dirs,
+            all_projects=all_projects,
             filters=filters
         )
 

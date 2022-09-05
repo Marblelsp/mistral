@@ -215,7 +215,7 @@ class DynamicActionProvider(ml_actions.ActionProvider):
         return self._build_action_descriptor(action_def)
 
     def find_all(self, namespace='', limit=None, sort_fields=None,
-                 sort_dirs=None, filters=None):
+                 sort_dirs=None, all_projects=False, filters=None):
         if filters is None:
             filters = dict()
 
@@ -225,6 +225,7 @@ class DynamicActionProvider(ml_actions.ActionProvider):
             limit=limit,
             sort_keys=sort_fields,
             sort_dirs=sort_dirs,
+            insecure=all_projects,
             **filters
         )
 

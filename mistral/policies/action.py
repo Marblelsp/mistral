@@ -63,6 +63,17 @@ rules = [
         ]
     ),
     policy.DocumentedRuleDefault(
+        name=ACTIONS % 'list:all_projects',
+        check_str=base.RULE_ADMIN_ONLY,
+        description='Return a list of actions from all projects.',
+        operations=[
+            {
+                'path': '/v2/actions',
+                'method': 'GET'
+            }
+        ]
+    ),
+    policy.DocumentedRuleDefault(
         name=ACTIONS % 'publicize',
         check_str=base.RULE_ADMIN_OR_OWNER,
         description='Make an action publicly available',

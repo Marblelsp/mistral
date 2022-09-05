@@ -153,11 +153,11 @@ class WorkbooksController(rest.RestController, hooks.HookController):
                          types.uniquelist, types.list, types.uniquelist,
                          wtypes.text, wtypes.text, wtypes.text,
                          resources.SCOPE_TYPES, wtypes.text,
-                         wtypes.text, wtypes.text)
+                         wtypes.text, bool, wtypes.text)
     def get_all(self, marker=None, limit=None, sort_keys='created_at',
                 sort_dirs='asc', fields='', created_at=None,
                 definition=None, name=None, scope=None, tags=None,
-                updated_at=None, namespace=None):
+                updated_at=None, all_projects=False, namespace=None):
         """Return a list of workbooks.
 
         :param marker: Optional. Pagination marker for large data sets.
@@ -187,6 +187,9 @@ class WorkbooksController(rest.RestController, hooks.HookController):
         """
         acl.enforce('workbooks:list', context.ctx())
 
+        if all_projects:
+            acl.enforce('workbooks:list:all_projects', context.ctx())
+
         filters = filter_utils.create_filters_from_request_params(
             created_at=created_at,
             definition=definition,
@@ -198,8 +201,9 @@ class WorkbooksController(rest.RestController, hooks.HookController):
         )
 
         LOG.debug("Fetch workbooks. marker=%s, limit=%s, sort_keys=%s, "
-                  "sort_dirs=%s, fields=%s, filters=%s", marker, limit,
-                  sort_keys, sort_dirs, fields, filters)
+                  "sort_dirs=%s, fields=%s, filters=%s, all_projects=%s", 
+                  marker, limit, sort_keys, sort_dirs, fields, filters, 
+                  all_projects)
 
         return rest_utils.get_all(
             resources.Workbooks,
@@ -211,5 +215,6 @@ class WorkbooksController(rest.RestController, hooks.HookController):
             sort_keys=sort_keys,
             sort_dirs=sort_dirs,
             fields=fields,
+            all_projects=all_projects,
             **filters
         )

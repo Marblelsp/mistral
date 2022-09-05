@@ -63,6 +63,17 @@ rules = [
         ]
     ),
     policy.DocumentedRuleDefault(
+        name=ACTION_EXECUTIONS % 'list:all_projects',
+        check_str=base.RULE_ADMIN_ONLY,
+        description='Return all tasks within the execution from all projects.',
+        operations=[
+            {
+                'path': '/v2/action_executions',
+                'method': 'GET'
+            }
+        ]
+    ),
+    policy.DocumentedRuleDefault(
         name=ACTION_EXECUTIONS % 'update',
         check_str=base.RULE_ADMIN_OR_OWNER,
         description='Update the specified action execution.',

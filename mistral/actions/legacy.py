@@ -176,6 +176,6 @@ class LegacyActionProvider(ml_actions.ActionProvider):
         return self._action_descs.get(action_name)
 
     def find_all(self, namespace=None, limit=None, sort_fields=None,
-                 sort_dirs=None, **filters):
+                 sort_dirs=None, all_projects=False, **filters):
         # TODO(rakhmerov): Apply sort_keys, sort_dirs, and filters.
         return self._action_descs.values()

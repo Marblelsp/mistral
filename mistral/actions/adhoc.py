@@ -252,9 +252,9 @@ class AdHocActionProvider(ml_actions.ActionProvider):
         return AdHocActionDescriptor(action_def)
 
     def find_all(self, namespace=None, limit=None, sort_fields=None,
-                 sort_dirs=None, **filters):
+                 sort_dirs=None, all_projects=False, **filters):
         # TODO(rakhmerov): Apply sort_keys, sort_dirs and filters.
         return [
             AdHocActionDescriptor(a_d)
-            for a_d in db_api.get_action_definitions()
+            for a_d in db_api.get_action_definitions(insecure=all_projects)
         ]
