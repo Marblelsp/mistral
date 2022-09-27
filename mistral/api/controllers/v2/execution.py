@@ -293,6 +293,7 @@ class ExecutionsController(rest.RestController):
             result_exec_dict.get('workflow_namespace', ''),
             result_exec_dict.get('id'),
             result_exec_dict.get('input'),
+            tags=result_exec_dict.get('tags', []),
             description=result_exec_dict.get('description', ''),
             **result_exec_dict.get('params') or {}
         )

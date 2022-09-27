@@ -121,7 +121,7 @@ class EngineClient(eng.Engine):
 
     @base.wrap_messaging_exception
     def start_workflow(self, wf_identifier, wf_namespace='', wf_ex_id=None,
-                       wf_input=None, description='', async_=False, **params):
+                       wf_input=None, tags=None, description='', async_=False, **params):
         """Starts workflow sending a request to engine over RPC.
 
         :param wf_identifier: Workflow identifier.
@@ -136,6 +136,9 @@ class EngineClient(eng.Engine):
         :return: Workflow execution.
         """
 
+        if tags is None:
+            tags = []
+
         call = self._client.async_call if async_ else self._client.sync_call
 
         return call(
@@ -145,6 +148,7 @@ class EngineClient(eng.Engine):
             wf_namespace=wf_namespace,
             wf_ex_id=wf_ex_id,
             wf_input=wf_input or {},
+            tags=tags,
             description=description,
             params=params
         )

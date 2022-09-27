@@ -37,7 +37,7 @@ _CHECK_AND_FIX_INTEGRITY_PATH = (
 
 @profiler.trace('workflow-handler-start-workflow', hide_args=True)
 def start_workflow(wf_identifier, wf_namespace, wf_ex_id, wf_input, desc,
-                   params):
+                   params, tags):
     wf = workflows.Workflow()
 
     wf_def = db_api.get_workflow_definition(wf_identifier, wf_namespace)
@@ -50,7 +50,8 @@ def start_workflow(wf_identifier, wf_namespace, wf_ex_id, wf_input, desc,
         wf_ex_id=wf_ex_id,
         input_dict=wf_input,
         desc=desc,
-        params=params
+        params=params,
+        tags=tags
     )
 
     _schedule_check_and_fix_integrity(wf.wf_ex, delay=10)

@@ -135,7 +135,7 @@ class EngineServer(service_base.MistralService):
         LOG.info("Waiting for an engine server to exit...")
 
     def start_workflow(self, rpc_ctx, wf_identifier, wf_namespace,
-                       wf_ex_id, wf_input, description, params):
+                       wf_ex_id, wf_input, description, params, tags):
         """Receives calls over RPC to start workflows on engine.
 
         :param rpc_ctx: RPC request context.
@@ -164,6 +164,7 @@ class EngineServer(service_base.MistralService):
             wf_ex_id,
             wf_input,
             description,
+            tags,
             **params
         )
 

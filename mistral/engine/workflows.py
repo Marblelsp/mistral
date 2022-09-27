@@ -115,7 +115,7 @@ class Workflow(object, metaclass=abc.ABCMeta):
         post_tx_queue.register_operation(_send_notification)
 
     @profiler.trace('workflow-start')
-    def start(self, wf_def, wf_ex_id, input_dict, desc='', params=None):
+    def start(self, wf_def, wf_ex_id, input_dict, desc='', tags=None, params=None):
         """Start workflow.
 
         :param wf_def: Workflow definition.
@@ -128,6 +128,9 @@ class Workflow(object, metaclass=abc.ABCMeta):
         """
 
         assert not self.wf_ex
+
+        if tags is None:
+            tags = []
 
         # New workflow execution.
         self.wf_spec = spec_parser.get_workflow_spec_by_definition_id(
@@ -148,7 +151,8 @@ class Workflow(object, metaclass=abc.ABCMeta):
             wf_ex_id,
             self.prepare_input(input_dict),
             desc,
-            params
+            params,
+            tags=tags
         )
 
         self.set_state(states.RUNNING)
@@ -345,12 +349,12 @@ class Workflow(object, metaclass=abc.ABCMeta):
 
         return final_ctx
 
-    def _create_execution(self, wf_def, wf_ex_id, input_dict, desc, params):
+    def _create_execution(self, wf_def, wf_ex_id, input_dict, desc, params, tags):
         values = {
             'id': wf_ex_id,
             'name': wf_def.name,
             'description': desc,
-            'tags': wf_def.tags,
+            'tags': tags,
             'workflow_name': wf_def.name,
             'workflow_namespace': wf_def.namespace,
             'workflow_id': wf_def.id,

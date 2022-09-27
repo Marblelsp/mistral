@@ -46,9 +46,12 @@ class DefaultEngine(base.Engine):
     @post_tx_queue.run
     @profiler.trace('engine-start-workflow', hide_args=True)
     def start_workflow(self, wf_identifier, wf_namespace='', wf_ex_id=None,
-                       wf_input=None, description='', async_=False, **params):
+                       wf_input=None, description='', tags=None, async_=False, **params):
         if wf_namespace:
             params['namespace'] = wf_namespace
+
+        if tags is None:
+            tags = []
 
         if cfg.CONF.notifier.notify:
             if 'notify' not in params or not params['notify']:
@@ -64,7 +67,8 @@ class DefaultEngine(base.Engine):
                     wf_ex_id,
                     wf_input or {},
                     description,
-                    params
+                    params,
+                    tags
                 )
 
                 # Checking a case when all tasks are completed immediately.
